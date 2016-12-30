@@ -7,8 +7,8 @@ import sys
 import pandas as pd
 #import numpy as np
 
-def excel_find_relevant(ef, kw):
-    df = pd.read_excel(ef, header=None, parse_cols="B:G", names=['ID','Desc','Project','Owner','Status','Severity'])
+def excel_find_relevant(ef, kw, complete):
+    df = pd.read_excel(ef, header=None, parse_cols="B:H", names=['ID','Desc','Project','Owner','Status','Severity','Note'])
     #df is a type of DataFrame now.
 
     #strip redundant space 
@@ -23,6 +23,10 @@ def excel_find_relevant(ef, kw):
             print('No result found!!')
             return
 
+    #drop some fields to make the report simpler
+    if not complete:
+        query_df = query_df.drop(['Project', 'Status', 'Note'], axis=1)
+
     #do not show the preceding index
     #left justified the Description column
     #use df['Description'].str.len().max() to compute the length of the longest string in df['Description'], and use that number, N, in a left-justified formatter '{:<Ns}'.format
@@ -36,7 +40,11 @@ if __name__ == '__main__':
         sys.exit()
     excel_f = sys.argv[1]
     keyword = sys.argv[2]
+    complete = False
+    #do not care the value of the 3rd argument.. not defined for the moment
+    if len(sys.argv) == 4:
+        complete = True
     print('---------- looking for \"' + keyword + '\" in \"' + excel_f + '\" ----------')
-    excel_find_relevant(excel_f, keyword) 
+    excel_find_relevant(excel_f, keyword, complete)
     print('---------- end of query ----------')
 
