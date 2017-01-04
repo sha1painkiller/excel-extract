@@ -37,10 +37,13 @@ def find_relevant(url, name, passwd, kw, complete):
     df[desc] = df[desc].str.strip()
     
     #find tuples that contain specific key words (case insensitive)
-    query_df = df[df['Assigned To'].str.contains(kw, case=False)]
-    if query_df.empty:
-        print('No result found!!')
-        return
+    if kw == '*':
+        query_df = df
+    else:
+        query_df = df[df['Assigned To'].str.contains(kw, case=False)]
+        if query_df.empty:
+            print('No result found!!')
+            return
     
     #drop some fields to make the report simpler
     if not complete:
