@@ -32,6 +32,8 @@ def find_relevant(url, name, passwd, kw, complete):
     df = dfs[0]
     #TODO: contains 2 garbage row in the end of the DataFrame?? just drop it.. investigate later..
     df = df.drop(df.index[-2:])
+    #remove rows with null ID
+    df = df[df['Bug ID'].notnull()]
     #strip redundant space for better formatting
     desc = 'Subject'
     df[desc] = df[desc].str.strip()
@@ -47,7 +49,7 @@ def find_relevant(url, name, passwd, kw, complete):
     
     #drop some fields to make the report simpler
     if not complete:
-        query_df = query_df.drop(['Assigned To', 'Date Last Modified', 'Status'], axis=1)
+        query_df = query_df.drop(['Date Last Modified', 'Status'], axis=1)
 
     #trim redundant characters in the fields
     query_df['Bug ID'] = query_df['Bug ID'].str.replace('Edit \| ', '')
@@ -57,6 +59,7 @@ def find_relevant(url, name, passwd, kw, complete):
     #use df['Description'].str.len().max() to compute the length of the longest string in df['Description'], and use that number, N, in a left-justified formatter '{:<Ns}'.format
     #the formatting might fail if data is not string type.. to be fixed
     print(query_df.to_string(formatters={desc:'{{:<{}s}}'.format(df[desc].str.len().max()).format}, index=False))
+    print('==> found %d tickets \033[0m<==' %len(query_df.index))
 
 
 if __name__ == '__main__':
@@ -78,5 +81,4 @@ if __name__ == '__main__':
     print('---------- looking for \"' + keyword + '\" in \"' + target_url + '\" ----------')
     find_relevant(target_url, name, passwd, keyword, complete)
     print('---------- end of query ----------')
-
 
