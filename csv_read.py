@@ -1,6 +1,6 @@
 # Excel (xlsx) information retrieval
 # (c) 2016, Burt Lien <burt.lien@gmail.com>
-# 
+#
 # used to generate a report for specific topic
 
 import sys
@@ -11,10 +11,10 @@ def excel_find_relevant(ef, kw, complete):
     df = pd.read_csv(ef)
     #df is a type of DataFrame now.
 
-    #strip redundant space 
+    #strip redundant space
     desc = 'Subject'
     df[desc] = df[desc].str.strip()
-    
+
     #find tuples that contain specific key words
     query_df = df[df['Assigned To'].str.contains(kw, case=False)]
     if query_df.empty:

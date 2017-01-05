@@ -1,14 +1,17 @@
 '''
-A web crawler, with autentication, to get specific information (personal use)
-Copyright 2017. burt.lien@gmail.com
-
-the program require an external .config to feed necessary information
+Copyright (C) 2017 Burt Lien - All Rights Reserved
+You may use, distribute and modify this code on your
+own way.
+This is a web crawler program, with autentication,
+to get specific information (personal use)
+Author: burt.lien@gmail.com
+Refer to README for usages.
 '''
 
 import sys
 import re
-from robobrowser import RoboBrowser
 import pandas as pd
+from robobrowser import RoboBrowser
 
 def find_relevant(url, name, passwd, kw, complete):
 
@@ -18,16 +21,16 @@ def find_relevant(url, name, passwd, kw, complete):
     browser = RoboBrowser() #(history=True)
     browser.open(url)
     form = browser.get_form()
-    
+
     form["login"] = name
     form["password"] = passwd
     browser.session.headers['Referer'] = url
     #submit username and password
     browser.submit_form(form)
-    
+
     #read_html return list of DataFrame
     #add " match='<key>'" if a specific table is what you're looking for
-    dfs = pd.read_html(str(browser.select), header=0) 
+    dfs = pd.read_html(str(browser.select), header=0)
     #first table is what we need in this example case
     df = dfs[0]
     #TODO: contains 2 garbage row in the end of the DataFrame?? just drop it.. investigate later..
@@ -37,7 +40,7 @@ def find_relevant(url, name, passwd, kw, complete):
     #strip redundant space for better formatting
     desc = 'Subject'
     df[desc] = df[desc].str.strip()
-    
+
     #find tuples that contain specific key words (case insensitive)
     if kw == '*':
         query_df = df
@@ -46,7 +49,7 @@ def find_relevant(url, name, passwd, kw, complete):
         if query_df.empty:
             print('No result found!!')
             return
-    
+
     #drop some fields to make the report simpler
     if not complete:
         query_df = query_df.drop(['Date Last Modified', 'Status'], axis=1)
