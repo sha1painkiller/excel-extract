@@ -19,7 +19,12 @@ def find_relevant(url, name, passwd, kw, complete):
     pd.options.mode.chained_assignment = None  # default='warn'
     #create a browser
     browser = RoboBrowser() #(history=True)
-    browser.open(url)
+    try:
+        browser.open(url, timeout=10)
+    except:
+        print("!!!!connection timeout!!!!")
+        return
+
     form = browser.get_form()
 
     form["login"] = name
