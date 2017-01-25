@@ -13,7 +13,7 @@ import re
 import pandas as pd
 from robobrowser import RoboBrowser
 
-def fetch_web(url, name, passwd):
+def fetch_web(url, name, passwd, path):
 
     #mute warning for data hazard
     pd.options.mode.chained_assignment = None  # default='warn'
@@ -46,7 +46,7 @@ def fetch_web(url, name, passwd):
     #trim redundant characters in the fields
     df['Bug ID'] = df['Bug ID'].str.replace('Edit \| ', '')
     #save as csv format
-    df.to_csv("./dat/bts.csv")
+    df.to_csv(path)
 
 def show_result(df, kw, complete):
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         print('renew %s..' % csv_name)
         if enforce and os.path.isfile(path):
             os.remove(path)
-        fetch_web(target_url, name, passwd)
+        fetch_web(target_url, name, passwd, path)
 
     #read external csv
     df = pd.read_csv(path)
