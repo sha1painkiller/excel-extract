@@ -7,13 +7,13 @@ to get specific information (personal use)
 Author: burt.lien@gmail.com
 Refer to README for usages.
 '''
-
+import os.path
 import sys
 import re
 import pandas as pd
 from robobrowser import RoboBrowser
 
-def find_relevant(url, name, passwd, kw, complete):
+def fetch_web(url, name, passwd):
 
     #mute warning for data hazard
     pd.options.mode.chained_assignment = None  # default='warn'
@@ -42,6 +42,17 @@ def find_relevant(url, name, passwd, kw, complete):
     df = df.drop(df.index[-2:])
     #remove rows with null ID
     df = df[df['Bug ID'].notnull()]
+
+    #trim redundant characters in the fields
+    df['Bug ID'] = df['Bug ID'].str.replace('Edit \| ', '')
+    #save as csv format
+    df.to_csv("./dat/bts.csv")
+
+def show_result(df, kw, complete):
+
+    #mute warning for data hazard
+    pd.options.mode.chained_assignment = None  # default='warn'
+
     #strip redundant space for better formatting
     desc = 'Subject'
     df[desc] = df[desc].str.strip()
@@ -55,12 +66,12 @@ def find_relevant(url, name, passwd, kw, complete):
             print('No result found!!')
             return
 
+    #drop index
+    query_df = query_df.drop(query_df.columns[0], axis=1)
     #drop some fields to make the report simpler
     if not complete:
         query_df = query_df.drop(['Date Last Modified', 'Status'], axis=1)
 
-    #trim redundant characters in the fields
-    query_df['Bug ID'] = query_df['Bug ID'].str.replace('Edit \| ', '')
     #query_df.style.set_properties(align="center")
     #do not show the preceding index
     #left justified the Description column
@@ -77,16 +88,31 @@ if __name__ == '__main__':
         sys.exit()
     keyword = sys.argv[1]
     complete = False
+    enforce = False
     #do not care the value of the 3rd argument.. not defined for the moment
     if len(sys.argv) == 3:
         complete = True
+        enforce = True
 
     #read config from external file
     dic = eval(open(".config").read())
     target_url = dic['website']
     name = dic['name']
     passwd = dic['password']
-    print('---------- looking for \"' + keyword + '\" in \"' + target_url + '\" ----------')
-    find_relevant(target_url, name, passwd, keyword, complete)
-    print('---------- end of query ----------')
+    csv_name = dic['csv_name']
+    path = "./dat/" + csv_name
+    #check existing file
+    if os.path.isfile(path) and not enforce:
+        print('parsing existing bts.csv')
+    else:
+        print('renew %s..' % csv_name)
+        if enforce and os.path.isfile(path):
+            os.remove(path)
+        fetch_web(target_url, name, passwd)
+
+    #read external csv
+    df = pd.read_csv(path)
+
+    #show customized results
+    show_result(df, keyword, False)
 
