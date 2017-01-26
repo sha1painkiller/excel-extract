@@ -6,13 +6,13 @@ How to use:
    go to https://www.python.org/downloads/ and choose the latest version
 2. Install pandas
    http://pandas.pydata.org/pandas-docs/stable/install.html
-   (note: "pip install pandas" if you have pip installed)
+   (note: "pip3 install pandas" if you have pip3 installed)
 3. Install robobrowser
    http://robobrowser.readthedocs.io/en/latest/installation.html
-   (note: "pip install robobrowser" if you have pip installed)
+   (note: "pip3 install robobrowser" if you have pip3 installed)
 4. config ".config" file in this directory
-   fill in "website", "name", and "passwd" (mandatory, or it will not work for sure.)
-5. run "python web_crawler.py <keyword>"
+   fill in "website", "name", "passwd", and :csv_name" (mandatory, or it will not work for sure.)
+5. run "python3 web_crawler.py -h" for usage
 
 Note:
 There might be a annoying warning message for the lack of default xml parser.
@@ -22,5 +22,5 @@ You can patch the following file to mute the warning:
     + def __init__(self, session=None, parser="lxml", user_agent=None,
 
 
-It is verified under Python 3.5.2 for the moment.
+It is verified under Python 3.6.0 for the moment.
 
