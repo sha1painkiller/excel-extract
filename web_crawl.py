@@ -9,6 +9,7 @@ Refer to README for usages.
 '''
 import os.path
 import sys
+from datetime import datetime
 import getopt
 import re
 import pandas as pd
@@ -80,6 +81,11 @@ def show_result(df, kw, complete):
     #the formatting might fail if data is not string type.. to be fixed
     print(query_df.to_string(formatters = {desc:'{{:<{}s}}'.format(df[desc].str.len().max()).format}, index = False))
     print('==> found %d tickets \033[0m<==' % len(query_df.index))
+
+    #show the last modified datetime for a justification whether enforce fetch should be triggered or not
+    mtime = os.path.getmtime(path)
+    last_modified = datetime.fromtimestamp(mtime).strftime('%Y-%m-%d %H:%M:%S')
+    print('Last update: ' + last_modified)
 
 
 if __name__ == '__main__':
