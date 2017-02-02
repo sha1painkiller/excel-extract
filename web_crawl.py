@@ -92,19 +92,20 @@ if __name__ == '__main__':
 
     usages = '''usage: python3 web_crawl.py [-h] [-k <keyword>|*] [-m 1|0] [-f 1|0]'
        -h help messages
-       -k keyword; "*" for everything
+       -k keyword; "*" for everything (default *)
        -m 1|0 1->show complete fields
-              0->only selected fields
+              0->only selected fields (default)
        -f 1|0 1->force retrieve tables from web
-              0->read from local cache
+              0->read from local cache (default)
               automatically turns to force mode upon absence of local cache file
        '''
-    if len(sys.argv) < 2:
-        print(usages)
-        sys.exit()
+    #if len(sys.argv) < 2:
+    #    print(usages)
+    #    sys.exit()
 
     #default settings
     complete = enforce = False
+    keyword = '*'
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "k:m:f:h")
