@@ -25,7 +25,7 @@ def fetch_web(url, name, passwd, path):
         browser.open(url, timeout = 10)
     except:
         print("!!!!connection timeout!!!!")
-        return
+        return 'timeout'
 
     form = browser.get_form()
 
@@ -47,6 +47,9 @@ def fetch_web(url, name, passwd, path):
 
     #trim redundant characters in the fields
     df['Bug ID'] = df['Bug ID'].str.replace('Edit \| ', '')
+    #remvoe old csv file since we have refreshed a new one
+    if os.path.isfile(path):
+        os.remove(path)
     #save as csv format
     df.to_csv(path)
 
@@ -136,12 +139,16 @@ if __name__ == '__main__':
         print('parsing existing bts.csv')
     else:
         print('renew %s..' % csv_name)
-        if enforce and os.path.isfile(path_file):
-            os.remove(path_file)
-        fetch_web(target_url, name, passwd, path_file)
+        #if enforce and os.path.isfile(path_file):
+        if 'timeout' == fetch_web(target_url, name, passwd, path_file):
+           print('try reading legacy file.')
 
     #read external csv
-    df = pd.read_csv(path_file)
+    try:
+        df = pd.read_csv(path_file)
+    except FileNotFoundError:
+        print('csv file not found!')
+        sys.exit()
 
     #show customized results
     show_result(df, keyword, complete)
